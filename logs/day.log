@@ -1,0 +1,3 @@
+2019-04-05 20:35:54,538-INFO Adding job tentatively -- it will be properly scheduled when the scheduler starts [base.py:436]
+2019-04-05 20:35:54,539-INFO Added job "QiuTanSpider.getInfo" to job store "default" [base.py:878]
+2019-04-05 20:35:54,539-INFO Scheduler started [base.py:162]
