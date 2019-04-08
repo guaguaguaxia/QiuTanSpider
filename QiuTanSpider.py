@@ -25,13 +25,14 @@ class QiuTanSpider(object):
             for i in rlist:
                 if i.startswith("A"):
                     j = i.split("^")
+                    league = j[2]
                     teama = j[5]
                     teamb = j[8]
                     begintime = j[11]
                     scorea = j[14]
                     scoreb = j[15]
                     if self.caldifftime(begintime) and (int(scorea) + int(scoreb)) >= 3:
-                        strs = strs + "%s队和%s队在开始比赛30分钟前进球数大于等于3\n" % (teama, teamb)
+                        strs = strs + "%s联赛:%s队和%s队在开始比赛30分钟前进球数大于等于3\n" % (league,teama,teamb)
             if strs != "":
                 self.hit_me(strs)
         except Exception as e:
