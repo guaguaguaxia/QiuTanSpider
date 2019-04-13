@@ -1,21 +1,21 @@
-import ctypes
-import os
 import sys
-
-import easygui as easygui
-from apscheduler.triggers.interval import IntervalTrigger
+import threading
 
 sys.path.append("..")
+import easygui as easygui
+from apscheduler.triggers.interval import IntervalTrigger
 import time
-from tkinter import messagebox, Tk
 from apscheduler.schedulers.blocking import BlockingScheduler
 from HttpClient import HttpClient, Method
+import ctypes
 
 
 class QiuTanSpider(object):
     def __init__(self):
         self.infourl = "http://live.win007.com/vbsxml/bfdata.js?r=007%s000"
         self.httpClient = HttpClient()
+        self.tipmaxtimes = 3
+        self.ballteammap = {}
 
     def getInfo(self):
         try:
@@ -25,6 +25,8 @@ class QiuTanSpider(object):
             for i in rlist:
                 if i.startswith("A"):
                     j = i.split("^")
+                    if len(j) < 15:
+                        continue
                     league = j[2]
                     teama = j[5]
                     teamb = j[8]
@@ -32,11 +34,15 @@ class QiuTanSpider(object):
                     scorea = j[14]
                     scoreb = j[15]
                     if self.caldifftime(begintime) and (int(scorea) + int(scoreb)) >= 3:
-                        strs = strs + "%s联赛:%s队和%s队在开始比赛30分钟前进球数大于等于3\n" % (league,teama,teamb)
+                        count = self.add(teama + teamb)
+                        if count < 3:
+                            nowtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                            strs = strs + "北京时间%s,%s联赛:%s队和%s队在开始比赛30分钟前进球数大于等于3\n" % (nowtime,league,teama,teamb)
             if strs != "":
-                self.hit_me(strs)
+                self.writefile(strs)
+                self.AutoCloseMessageBoxW(strs,5)
         except Exception as e:
-            self.hit_me(e)
+            self.AutoCloseMessageBoxW("代码异常:"+ str(e),5)
 
     def getHeader(self):
         return {
@@ -68,8 +74,44 @@ class QiuTanSpider(object):
         scheduler.add_job(self.getInfo, trigger)
         scheduler.start()
 
+    def get(self,teamname):
+        return self.ballteammap.get(teamname)
+
+    def set(self,teamname,count):
+        self.ballteammap[teamname] = count
+
+    def add(self,teamname):
+        count = self.get(teamname)
+        if count is None:
+            self.set(teamname,1)
+            return 1
+        else:
+            count = count + 1
+            self.set(teamname,count)
+            return count
+
+    def test(self):
+        MessageBox = ctypes.windll.user32.MessageBoxW
+        MessageBox(None, 'Hello', 'Window title', 0)
+
+    def worker(self,title, close_until_seconds):
+        time.sleep(close_until_seconds)
+        wd = ctypes.windll.user32.FindWindowW(0, title)
+        ctypes.windll.user32.SendMessageW(wd, 0x0010, 0, 0)
+        return
+
+    def AutoCloseMessageBoxW(self,text, close_until_seconds):
+        t = threading.Thread(target=self.worker, args=("分数提醒", close_until_seconds))
+        t.start()
+        ctypes.windll.user32.MessageBoxW(0, text, "分数提醒", 0)
+
+    def writefile(self,text):
+        f = open("./历史提醒.txt","a+")
+        f.write(text)
+        f.flush()
+        f.close()
 
 
 if __name__ == '__main__':
-    # QiuTanSpider().hit_me("211111111111111111111")
-    QiuTanSpider().begin()
+    met = QiuTanSpider()
+    met.begin()
