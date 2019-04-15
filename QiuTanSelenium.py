@@ -35,8 +35,8 @@ class QiuTanSelenium(object):
                 if not times.isdigit():
                     times = 0
                 teamb = i.select("td")[6].text
-                print(league,times,teama,teamb,score)
-                if int(times) < 30 and int(score) >= 3:
+                # print(league,times,teama,teamb,score)
+                if 0 < int(times) < 30 and int(score) >= 3:
                     count = self.add(teama + teamb)
                     if count < 3:
                         nowtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -82,7 +82,7 @@ class QiuTanSelenium(object):
     def begin(self):
         driver = webdriver.Chrome()
         scheduler = BlockingScheduler()
-        trigger = IntervalTrigger(seconds=4)
+        trigger = IntervalTrigger(seconds=10)
         scheduler.add_job(self.getInfo, trigger,args=[driver])
         scheduler.start()
 
