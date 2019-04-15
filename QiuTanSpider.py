@@ -1,7 +1,6 @@
 import sys
-import threading
-
 sys.path.append("..")
+import threading
 import easygui as easygui
 from apscheduler.triggers.interval import IntervalTrigger
 import time
