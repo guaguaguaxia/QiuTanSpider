@@ -24,17 +24,18 @@ class QiuTanSelenium(object):
             del matchs[0]
             strs = ""
             for i in matchs:
-                if len(i) <= 7:
+                if len(i.select("td")) <= 7:
                     continue
                 league = i.select("td")[1].text
                 times = i.select("td")[3].text
                 teama = i.select("td")[4].text
-                if len(i.select("td")[5].text.split("-")[0]) <= 2:
+                if len(i.select("td")[5].text.split("-")) < 2 or i.select("td")[5].text ==  "-":
                     continue
                 score = int(i.select("td")[5].text.split("-")[0]) + int(i.select("td")[5].text.split("-")[1])
                 if not times.isdigit():
                     times = 0
                 teamb = i.select("td")[6].text
+                print(league,times,teama,teamb,score)
                 if int(times) < 30 and int(score) >= 3:
                     count = self.add(teama + teamb)
                     if count < 3:
@@ -81,7 +82,7 @@ class QiuTanSelenium(object):
     def begin(self):
         driver = webdriver.Chrome()
         scheduler = BlockingScheduler()
-        trigger = IntervalTrigger(seconds=10)
+        trigger = IntervalTrigger(seconds=4)
         scheduler.add_job(self.getInfo, trigger,args=[driver])
         scheduler.start()
 
