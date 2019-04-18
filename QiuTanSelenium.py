@@ -7,12 +7,18 @@ from apscheduler.triggers.interval import IntervalTrigger
 from bs4 import BeautifulSoup
 from selenium import webdriver
 
+from EmailUtil import EmailUtil
+
+
 class QiuTanSelenium(object):
     def __init__(self):
         self.infourl = "http://live.win007.com/"
         self.ballteammap = {}
+        self.emails = ["1030056125@qq.com"]
     def getInfo(self,driver):
         try:
+            if self.isclean():
+                self.ballteammap.clear()
             driver.get(self.infourl)
             driver.set_window_size(800, 480)
             driver.find_element_by_id("button6").click()
@@ -44,6 +50,7 @@ class QiuTanSelenium(object):
             if strs != "":
                 self.writefile(strs)
                 self.AutoCloseMessageBoxW(strs, 5)
+                EmailUtil().send(strs,self.emails)
         except Exception as e:
             self.AutoCloseMessageBoxW("代码异常:"+ str(e),5)
 
@@ -86,5 +93,12 @@ class QiuTanSelenium(object):
         scheduler.add_job(self.getInfo, trigger,args=[driver])
         scheduler.start()
 
+    def isclean(self):
+        nowtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        times = nowtime.split(" ")[1].split(":")
+        if (times[0] == "12" and times[1] == "00" and times[1] == "00") or (times[0] == "00" and times[1] == "00" and times[1] == "00"):
+            return True
+        else:
+            return False
 if __name__ == '__main__':
-    QiuTanSelenium().begin()
+    QiuTanSelenium().isclean()
