@@ -48,9 +48,9 @@ class QiuTanSelenium(object):
                         nowtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
                         strs = strs + "北京时间%s,%s联赛:%s队和%s队在开始比赛30分钟前进球数大于等于3\n" % (nowtime, league, teama, teamb)
             if strs != "":
+                EmailUtil().send(strs, self.emails)
                 self.writefile(strs)
                 self.AutoCloseMessageBoxW(strs, 5)
-                EmailUtil().send(strs,self.emails)
         except Exception as e:
             self.AutoCloseMessageBoxW("代码异常:"+ str(e),5)
 
@@ -101,4 +101,4 @@ class QiuTanSelenium(object):
         else:
             return False
 if __name__ == '__main__':
-    QiuTanSelenium().isclean()
+    QiuTanSelenium().begin()
