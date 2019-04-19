@@ -22,6 +22,7 @@ class QiuTanSelenium(object):
             driver.get(self.infourl)
             driver.set_window_size(800, 480)
             driver.find_element_by_id("button6").click()
+            time.sleep(2)
             pageSource = driver.page_source
             soup = BeautifulSoup(pageSource, 'lxml')
             matchs = soup.select("table.mytable tbody tr[align]")
@@ -52,7 +53,7 @@ class QiuTanSelenium(object):
                 self.writefile(strs)
                 # self.AutoCloseMessageBoxW(strs, 5)
         except Exception as e:
-            self.writefile(e)
+            self.writefile(str(e))
             # self.AutoCloseMessageBoxW("代码异常:"+ str(e),5)
 
     def get(self,teamname):
