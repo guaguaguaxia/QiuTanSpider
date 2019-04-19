@@ -14,8 +14,7 @@ class QiuTanSelenium(object):
     def __init__(self):
         self.infourl = "http://live.win007.com/"
         self.ballteammap = {}
-        self.emails = ["1030056125@qq.com"]
-    #     "chu1624@126.com","1161369126@qq.com"
+        self.emails = ["1030056125@qq.com","chu1624@126.com","1161369126@qq.com"]
     def getInfo(self,driver):
         try:
             if self.isclean():
