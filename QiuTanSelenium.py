@@ -43,7 +43,7 @@ class QiuTanSelenium(object):
                     times = 0
                 teamb = i.select("td")[6].text
                 # print(league,times,teama,teamb,score)
-                if 0 < int(times) < 90 and int(score) >= 3:
+                if 0 < int(times) < 30 and int(score) >= 3:
                     count = self.add(teama + teamb)
                     if count < 3:
                         nowtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -54,6 +54,7 @@ class QiuTanSelenium(object):
                 # self.AutoCloseMessageBoxW(strs, 5)
         except Exception as e:
             self.writefile(str(e))
+            print(e)
             # self.AutoCloseMessageBoxW("代码异常:"+ str(e),5)
 
     def get(self,teamname):
