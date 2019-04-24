@@ -4,10 +4,10 @@ class EmailUtil:
     def __init__(self):
         pass
     def send(self,content,tos):
-        mail_host = 'smtp.aliyun.com'
-        mail_user = 'guaguaguaxia@aliyun.com'
-        mail_pass = '19960930+ad'
-        sender = 'guaguaguaxia@aliyun.com'
+        mail_host = 'smtp.163.com'
+        mail_user = '13048282493'
+        mail_pass = 'qiutan123'
+        sender = '13048282493@163.com'
         receivers = tos
 
         message = MIMEText(content, 'plain', 'utf-8')
@@ -19,8 +19,8 @@ class EmailUtil:
             message['To'] = receivers[0]
 
         try:
-            smtpObj = smtplib.SMTP_SSL(host=mail_host,port=465)
-            smtpObj.connect(mail_host, 465)
+            smtpObj = smtplib.SMTP()
+            smtpObj.connect(mail_host, 25)
             smtpObj.login(mail_user, mail_pass)
             smtpObj.sendmail(sender, receivers, message.as_string())
             smtpObj.quit()
@@ -28,5 +28,4 @@ class EmailUtil:
         except smtplib.SMTPException as e:
             print('error', e)
 if __name__ == '__main__':
-    lists = ["1030056125@qq.com"]
-    EmailUtil().send("到底让不让我发？",lists)
+    EmailUtil().send()
