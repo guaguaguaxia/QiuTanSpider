@@ -1,4 +1,7 @@
 import sys
+
+from EmailUtil import EmailUtil
+
 sys.path.append("..")
 import threading
 import easygui as easygui
@@ -15,7 +18,7 @@ class QiuTanSpider(object):
         self.httpClient = HttpClient()
         self.tipmaxtimes = 3
         self.ballteammap = {}
-
+        self.emails = ["1030056125@qq.com"]
     def getInfo(self):
         try:
             r = self.httpClient.request(self.infourl % int(time.time()), Method.GET, headers=self.getHeader(),formats="text", encoding="gbk")
@@ -39,7 +42,7 @@ class QiuTanSpider(object):
                             strs = strs + "北京时间%s,%s联赛:%s队和%s队在开始比赛30分钟前进球数大于等于3\n" % (nowtime,league,teama,teamb)
             if strs != "":
                 self.writefile(strs)
-                self.AutoCloseMessageBoxW(strs,5)
+                EmailUtil().send(strs,self.emails)
         except Exception as e:
             self.AutoCloseMessageBoxW("代码异常:"+ str(e),5)
 
@@ -68,10 +71,9 @@ class QiuTanSpider(object):
             return False
 
     def begin(self):
-        scheduler = BlockingScheduler()
-        trigger = IntervalTrigger(seconds=10)
-        scheduler.add_job(self.getInfo, trigger)
-        scheduler.start()
+        while True:
+            self.getInfo()
+            time.sleep(15)
 
     def get(self,teamname):
         return self.ballteammap.get(teamname)
