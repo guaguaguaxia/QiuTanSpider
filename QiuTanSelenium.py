@@ -17,6 +17,7 @@ class QiuTanSelenium(object):
         self.ballteammap = {}
         self.emails = ["1161369126@qq.com","chu1624@126.com"]
     def getInfo(self,driver):
+            matchs = []
             if self.isclean():
                 self.ballteammap.clear()
             try:
@@ -34,6 +35,7 @@ class QiuTanSelenium(object):
             except TimeoutException:
                 print(11111)
                 pass
+
             for i in matchs:
                 if len(i.select("td")) <= 7:
                     continue
