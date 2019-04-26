@@ -6,6 +6,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 
 from EmailUtil import EmailUtil
 
@@ -16,20 +17,23 @@ class QiuTanSelenium(object):
         self.ballteammap = {}
         self.emails = ["1030056125@qq.com","chu1624@126.com","1161369126@qq.com"]
     def getInfo(self,driver):
-        try:
             if self.isclean():
                 self.ballteammap.clear()
-            driver.get(self.infourl)
-            driver.set_window_size(800, 480)
-            driver.find_element_by_id("button6").click()
-            time.sleep(2)
-            pageSource = driver.page_source
-            soup = BeautifulSoup(pageSource, 'lxml')
-            matchs = soup.select("table.mytable tbody tr[align]")
-            if len(matchs) < 1 :
-                return
-            del matchs[0]
-            strs = ""
+            try:
+                driver.get(self.infourl)
+                driver.set_page_load_timeout(3)
+                driver.set_window_size(800, 480)
+                driver.find_element_by_id("button6").click()
+                pageSource = driver.page_source
+                soup = BeautifulSoup(pageSource, 'lxml')
+                matchs = soup.select("table.mytable tbody tr[align]")
+                if len(matchs) < 1:
+                    return
+                del matchs[0]
+                strs = ""
+            except TimeoutException:
+                print(11111)
+                pass
             for i in matchs:
                 if len(i.select("td")) <= 7:
                     continue
@@ -52,10 +56,7 @@ class QiuTanSelenium(object):
                 EmailUtil().send(strs, self.emails)
                 self.writefile(strs)
                 # self.AutoCloseMessageBoxW(strs, 5)
-        except Exception as e:
-            self.writefile(str(e))
-            print(e)
-            # self.AutoCloseMessageBoxW("代码异常:"+ str(e),5)
+
 
     def get(self,teamname):
         return self.ballteammap.get(teamname)
@@ -93,7 +94,7 @@ class QiuTanSelenium(object):
         driver = webdriver.Chrome()
         while True:
             self.getInfo(driver)
-            time.sleep(10)
+            time.sleep(15)
 
     def isclean(self):
         nowtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
