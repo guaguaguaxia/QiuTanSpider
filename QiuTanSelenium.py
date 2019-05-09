@@ -18,20 +18,19 @@ class QiuTanSelenium(object):
         self.emails = ["1161369126@qq.com","chu1624@126.com"]
     def getInfo(self,driver):
             matchs = []
+            strs = ""
             if self.isclean():
                 self.ballteammap.clear()
             try:
-                driver.get(self.infourl)
-                driver.set_page_load_timeout(3)
-                driver.set_window_size(800, 480)
-                driver.find_element_by_id("button6").click()
+
+
+
                 pageSource = driver.page_source
                 soup = BeautifulSoup(pageSource, 'lxml')
                 matchs = soup.select("table.mytable tbody tr[align]")
                 if len(matchs) < 1:
                     return
                 del matchs[0]
-                strs = ""
             except TimeoutException:
                 print(11111)
                 pass
@@ -94,9 +93,13 @@ class QiuTanSelenium(object):
 
     def begin(self):
         driver = webdriver.Chrome()
+        driver.get(self.infourl)
+        driver.set_page_load_timeout(3)
+        driver.set_window_size(800, 480)
+        driver.find_element_by_id("button6").click()
         while True:
             self.getInfo(driver)
-            time.sleep(15)
+            time.sleep(60)
 
     def isclean(self):
         nowtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())

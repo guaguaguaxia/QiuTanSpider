@@ -4,7 +4,7 @@ from EmailUtil import EmailUtil
 
 sys.path.append("..")
 import threading
-import easygui as easygui
+
 from apscheduler.triggers.interval import IntervalTrigger
 import time
 from apscheduler.schedulers.blocking import BlockingScheduler
@@ -37,9 +37,9 @@ class QiuTanSpider(object):
                     scoreb = j[15]
                     if self.caldifftime(begintime) and (int(scorea) + int(scoreb)) >= 3:
                         count = self.add(teama + teamb)
-                        if count < 3:
+                        if count < 2:
                             nowtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-                            strs = strs + "北京时间%s,%s联赛:%s队和%s队在开始比赛30分钟前进球数大于等于3\n" % (nowtime,league,teama,teamb)
+                            strs = strs + "无界面服务:北京时间%s,%s联赛:%s队和%s队在开始比赛30分钟前进球数大于等于3\n" % (nowtime,league,teama,teamb)
             if strs != "":
                 self.writefile(strs)
                 EmailUtil().send(strs,self.emails)
@@ -53,8 +53,7 @@ class QiuTanSpider(object):
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36"
         }
 
-    def hit_me(self, strs):
-        easygui.msgbox(strs, '分数提醒')
+
 
 
 
@@ -73,7 +72,7 @@ class QiuTanSpider(object):
     def begin(self):
         while True:
             self.getInfo()
-            time.sleep(15)
+            time.sleep(60)
 
     def get(self,teamname):
         return self.ballteammap.get(teamname)
